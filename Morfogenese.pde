@@ -6,32 +6,38 @@
 
 /** Chamada no início da simulação, prepara o ambiente para execução. */
 void setup() {
-  setupProcessingColor();
-  setupProcessingFrame();
-  setupProcessingShape();
-  
+  setupColorMode();
+  setupDisplaySize();  
+  setupFrame();
+  setupShapeAttributes();
+
   setupVariables();
 }
 
-
-void setupProcessingColor() {
-  colorMode(RGB, 255);
+/** Define como Processing interpreta dados de cor.*/
+void setupColorMode() {
+  colorMode(Configs.Processing.Color.Mode, Configs.Processing.Color.Max);
 }  
 
-void setupProcessingFrame() {
+/** Defines a dimensão da janela de visualização em unidades de pixels. */
+void setupDisplaySize() {
   int w = int(Configs.Processing.Environment.Frame.DisplayRatio*displayWidth);
   int h = int(Configs.Processing.Environment.Frame.DisplayRatio*displayHeight);
 
   if (Configs.Processing.Environment.OpenGL) size(w, h, OPENGL);
   else size(w, h);
+}
 
+/** Define a quantidade de quadros por segundo. */
+void setupFrame() {
   frame.setResizable(Configs.Processing.Environment.Frame.Resizable);
   frameRate(Configs.Processing.Environment.Frame.Rate);
-  
+
   hint(Configs.Processing.Environment.Frame.Hint);
 }
 
-void setupProcessingShape() {
+/** Define como Processing desenha formas. Ajusta a suavidade de linhas, e o modo de desenho de retângulos e elipses. */
+void setupShapeAttributes() {
   smooth(Configs.Processing.Shape.Smooth);
   rectMode(Configs.Processing.Shape.Mode.Rect);
   ellipseMode(Configs.Processing.Shape.Mode.Ellipse);
@@ -45,10 +51,16 @@ ArrayList<Displayable> displayables;
 void setupVariables() {
   updatables = new ArrayList<Updatable>();
   displayables = new ArrayList<Displayable> ();
+
+  updatables.add(new Background());
+  
   
   // Dummy setup
-  Body b = new Body(20, 20, 10);
+  Body b = new Body(new ShapeComponent(10), new StyleComponent(0, 0, 0), new PositionComponent(20, 20, 0, 0), 10);
+  Agent a = new Agent(b);
+  
   displayables.add(b);
+  updatables.add(a);
 }
 
 
@@ -72,6 +84,8 @@ void setupVariables() {
  *     4.2) fonte de energia
  *  5) Cromossomo?
  *  6) Parasita/virus? (outro "bicho" que interage com o bicho original)
+ *
+ * - Fazer algo que funcione, desempenho é uma preocupação posterior.
  * 
  * Definir uma personalidade - via Comportamento - conforme personagens conhecidas (ex: Saci, lobisomem, chapéuzinho, etc.) e avaliar a evolução das populações. Força um "motivo artistico". 
  */

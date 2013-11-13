@@ -8,26 +8,20 @@
  *   Funções  *
  **************/
 
-/** Overload da função original com argumento PVector. */
-void translate(PVector position) {
-  translate(position.x, position.y);
+/** Overload da função original com argumento PositionComponent. */
+void translate(PositionComponent position) {
+  translate(position.location.x, position.location.y);
 }
 
+/** Overload da função original com argumento PositionComponent. */
+void rotate(PositionComponent position) {
+  rotate(position.angle);
+}
 
 /**************
  * Interfaces *
  **************/
 
-/** Define como utilizar uma ação. */
-interface Action {
-  /** Executa a ação. */
-  void execute();
-}
-
-
-/** Define como utilizar um comportamento. */
-interface Behavior {
-}
 
 /** Define a interface para visualização. */
 interface Displayable {

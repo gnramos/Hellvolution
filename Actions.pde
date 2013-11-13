@@ -4,18 +4,29 @@
  * @author Guilherme N. Ramos (gnramos@unb.br)
  */
 
-class Move implements Action {
-  Body owner;
-  PVector velocity;     /**< Velocidade do componente. */
-  PVector acceleration; /**< Aceleração do componente. */
-  float   maxSpeed;     /**< Velocidade máxima permitida. */
+/** Define como utilizar uma ação. */
+interface Action {
+  /** Executa a ação. */
+  void execute(Body owner);
+}
 
-  void execute() {
-    acceleration.limit(Configs.Actions.Movement.MaxAcceleration);
-    velocity.add(acceleration);
-    velocity.limit(maxSpeed);
-    owner.position2D.add(velocity);
-    acceleration.mult(0);
+/** Define a ação de movimento. */
+class MoveAction implements Action {
+  PVector acceleration;
+
+  MoveAction(PVector acceleration) {
+assert acceleration != null : 
+    "Não é possível criar um movimento sem aceleração.";
+
+    this.acceleration = acceleration;
+  }
+
+  void execute(Body owner) {
+assert owner != null : 
+    "Não é possível mover um corpo nulo.";
+
+    owner.move.acceleration.add(this.acceleration);
+    /** @todo só adicionar se não exceder um limiar X */
   }
 }
 
@@ -27,7 +38,6 @@ class Move implements Action {
  class ChangeSound implements Action {
  }
  class ChangeEnergy implements Action {
- }
- 
+ } 
  class Recombine implements Action {
  }*/

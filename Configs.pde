@@ -11,10 +11,18 @@ static class Configs {
     /** Define configurações de movimentação. */
     static class Movement {
       static float MaxAcceleration = 5; /**< Define a aceleração máxima. */
+      static float MaxForce = 50; /**< Define a força máxima que pode ser aplicada. */
     }
   } // Actions
   static class Processing {
-    static class Environment {    
+    static class Color {
+      static final int Mode = RGB; /**<  Either RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness. */
+      static final float Max = 255; /**< Range for all color elements. */
+    }
+    static class Environment {
+      static class Background {
+        static final color Color = #FFFFFF; /**< Cor do fundo de tela. */
+      }
       static class Frame {
         static final float   DisplayRatio = 0.9;  /**< Indica a razão entre o tamanho do frame e o do display. */
         static       int     Rate         = 30;   /**< Quadros por segundo. */

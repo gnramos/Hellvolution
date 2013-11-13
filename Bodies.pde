@@ -4,7 +4,6 @@
  * @author Guilherme N. Ramos (gnramos@unb.br)
  */
 
-
 class Bicho {
   Body body;
   //  int shape;
@@ -13,64 +12,79 @@ class Bicho {
   //  int age;
 }
 
-/** Define uma forma. */
-class Shape implements Displayable {
-  float size; /** Tamanho da forma. */
-
-  Shape(float size) {
-    this.size = size;
-  }
-
-  /** Desenha a forma. */
-  void display() {
-    ellipse(0, 0, this.size, this.size);
-  }
-}
-
 /** Define o corpo. */
-class Body implements Displayable {
-  Shape   shape;      /**< Forma do corpo. */
-  PVector position2D; /**< Posição do corpo. */
-  float   heading2D;  /**< Orientação do corpo. */
-  
-  Body(float x, float y, float size) {
-    this.shape = new Shape(size);
-    this.position2D = new PVector(x, y);
+class Body implements Displayable, Updatable {
+  ShapeComponent    shape;    /**< Forma do corpo. */
+  StyleComponent    style;    /**< Estilo do corpo. */
+  PositionComponent position; /**< Posição do corpo. */
+  MoveComponent     move;     /**< Movimentação do corpo. */
+  ArrayList<Sensor> sensors;
+
+  Body(ShapeComponent shape, StyleComponent style, PositionComponent position, float maxSpeed) {
+assert shape != null : 
+    "Não é possível criar um corpo com shape nulo.";
+assert style != null : 
+    "Não é possível criar um corpo com style nulo.";
+assert position != null : 
+    "Não é possível criar um corpo com position nulo.";
+
+    this.move = new MoveComponent(maxSpeed, position);
+    this.position = position;
+    this.sensors = new ArrayList<Sensor>();
+    this.shape = shape;
+    this.style = style;
   }
 
   void display() {
     pushMatrix();    
-    translate(this.position2D);
-    rotate(this.heading2D);
-    
+
+    translate(this.position);
+    rotate(this.position);    
+
+    this.style.push();
     shape.display();
     
+    // Debug
+    strokeWeight(3);
+    stroke(#FF0000);
+    line(0,0,move.velocity.x*10, move.velocity.y*10);
+
     popMatrix();
   }
+  
+  void update() {
+    move.acceleration.div(shape.size);
+    move.update();
+  }
 }
 
-
-abstract class Sensor {
-  /** percebe o estado atual do ambiente. */
-  abstract void read();
-}
-
-abstract class Agent implements Updatable {
-  ArrayList<Sensor> sensors;
+class Agent implements Updatable {
   ArrayList<Behavior> behaviors;
+  Body body;
 
-  /** Percebe o estado ambiente com seus sensores. */
-  void perceive() {
-    for (Sensor s : sensors) s.read();
+  /** Construtor. */
+  Agent(Body body) {
+assert body != null: 
+    "Não é possível criar um agente com body nulo.";
+
+    behaviors = new ArrayList<Behavior>();
+    this.body = body;
+    
+    behaviors.add(new WanderBehavior(body));
+    behaviors.add(new WallAvoidanceBehavior(body, new WallSensor(body.position.location, 2*body.shape.size)));
   }
 
-  /** Decide quais ações devem ser tomadas em função da percepção. */
-  abstract ArrayList<Action> decideActions();
-
   // overload 
-  void update() {
-    perceive();
-    for (Action action : decideActions()) action.execute();
+  void update() {    
+    ArrayList<Action> actions = new ArrayList<Action>();
+    
+    // Decisão
+    for(Behavior behavior : behaviors) if(behavior.enabled) actions.addAll(behavior.whatToDo());
+    // Preparação
+    for (Action action : actions) action.execute(body);
+    // Execução
+    body.update();
+    /** @todo essa nomenclatura soa estranha */
   }
 }
 
