@@ -4,9 +4,10 @@
  * @author Guilherme N. Ramos (gnramos@unb.br)
  */
 
-/** Função chamada no laço principal da simulação. */
+BodyComponent b = randomBodyComponent();
+
 void draw() {
-  for (Updatable current : updatables) current.update();
-  for (Displayable current : displayables) current.display();
+  b.update();
+  b.display();
 }
 

@@ -4,31 +4,76 @@
  * @author Guilherme N. Ramos (gnramos@unb.br)
  */
 
-/**************
- *   Funções  *
- **************/
+
+/***********
+ * Funções *
+ ***********/
 
 /** Overload da função original com argumento PositionComponent. */
-void translate(PositionComponent position) {
-  translate(position.location.x, position.location.y);
+void translate(Physics2DComponent physics2D) {
+  translate(physics2D.position.location.x, physics2D.position.location.y);
 }
 
 /** Overload da função original com argumento PositionComponent. */
-void rotate(PositionComponent position) {
-  rotate(position.angle);
+void rotate(Physics2DComponent physics2D) {
+  rotate(physics2D.position.headingAngle);
 }
+
+
+float randomShapeSize() {
+  return random(Configs.Component.Shape.Min.Size, Configs.Component.Shape.Max.Size);
+}
+
+ShapeComponent randomShapeComponent() {
+  float prob = random(1);
+  if (prob < 0.5)
+    return new CircleShape(randomShapeSize());
+  else
+    return new SquareShape(randomShapeSize());
+}
+
+color randomColor() {
+  return color(random(Configs.Processing.Color.Max), random(Configs.Processing.Color.Max), random(Configs.Processing.Color.Max));
+}
+
+float randomStrokeWeight() {
+  return random(Configs.Component.Style.Min.StrokeWeight, Configs.Component.Style.Max.StrokeWeight);
+}
+
+StyleComponent randomStyleComponent() {
+  return new StyleComponent(randomColor(), randomColor(), randomStrokeWeight());
+}
+
+PositionComponent randomPositionComponent() {
+  return new PositionComponent(random(width), random(height), 0, random(TWO_PI));
+}
+
+Movement2DComponent randomMovement2DComponent() {
+  return new Movement2DComponent(PVector.random2D(), PVector.random2D());
+}
+
+float randomMass() {
+  return random(Configs.Component.Physics2D.Min.Mass, Configs.Component.Physics2D.Max.Mass);
+}
+
+Physics2DComponent randomPhysics2DComponent() {
+  return new Physics2DComponent(randomMass(), randomMovement2DComponent(), randomPositionComponent());
+}
+
+BodyComponent randomBodyComponent() {
+  return new BodyComponent(randomShapeComponent(), randomStyleComponent(), randomPhysics2DComponent());
+}
+
 
 /**************
  * Interfaces *
  **************/
 
-
-/** Define a interface para visualização. */
 interface Displayable {
   void display();
 }
 
-/** Define a interface para atualização. */
 interface Updatable {
   void update();
 }
+

@@ -1,4 +1,4 @@
-/** @file newM.pde
+/** @file UnBMorfogenese.pde
  * Inicializa as configurações do projeto.
  *
  * @author Guilherme N. Ramos (gnramos@unb.br)
@@ -6,62 +6,48 @@
 
 /** Chamada no início da simulação, prepara o ambiente para execução. */
 void setup() {
-  setupColorMode();
-  setupDisplaySize();  
+  setupColor(); 
   setupFrame();
   setupShapeAttributes();
 
-  setupVariables();
+  setupGlobalVariables();
 }
 
-/** Define como Processing interpreta dados de cor.*/
-void setupColorMode() {
+void setupColor() {
   colorMode(Configs.Processing.Color.Mode, Configs.Processing.Color.Max);
 }  
 
-/** Defines a dimensão da janela de visualização em unidades de pixels. */
-void setupDisplaySize() {
-  int w = int(Configs.Processing.Environment.Frame.DisplayRatio*displayWidth);
-  int h = int(Configs.Processing.Environment.Frame.DisplayRatio*displayHeight);
+void setupFrameSize() {
+  frame.setResizable(Configs.Processing.Environment.Frame.Resizable);
+  
+  int w = int(Configs.Processing.Environment.Frame.ToDisplayRatio*displayWidth);
+  int h = int(Configs.Processing.Environment.Frame.ToDisplayRatio*displayHeight);
 
-  if (Configs.Processing.Environment.OpenGL) size(w, h, OPENGL);
+  if (Configs.Processing.Environment.UseOpenGL) size(w, h, OPENGL);
   else size(w, h);
 }
 
-/** Define a quantidade de quadros por segundo. */
-void setupFrame() {
-  frame.setResizable(Configs.Processing.Environment.Frame.Resizable);
+void setupFrameRate() {
   frameRate(Configs.Processing.Environment.Frame.Rate);
-
   hint(Configs.Processing.Environment.Frame.Hint);
 }
 
-/** Define como Processing desenha formas. Ajusta a suavidade de linhas, e o modo de desenho de retângulos e elipses. */
+void setupFrame() {
+  setupFrameSize();
+  setupFrameRate();
+}
+
 void setupShapeAttributes() {
   smooth(Configs.Processing.Shape.Smooth);
-  rectMode(Configs.Processing.Shape.Mode.Rect);
-  ellipseMode(Configs.Processing.Shape.Mode.Ellipse);
+  rectMode(Configs.Processing.Shape.RectMode);
+  ellipseMode(Configs.Processing.Shape.EllipseMode);
 }
 
 /* Variáveis globais */
-ArrayList<Updatable> updatables;
-ArrayList<Displayable> displayables;
 
-/** Inicializa as variáveis globais. */
-void setupVariables() {
-  updatables = new ArrayList<Updatable>();
-  displayables = new ArrayList<Displayable> ();
-
-  updatables.add(new Background());
-  
-  
-  // Dummy setup
-  Body b = new Body(new ShapeComponent(10), new StyleComponent(0, 0, 0), new PositionComponent(20, 20, 0, 0), 10);
-  Agent a = new Agent(b);
-  
-  displayables.add(b);
-  updatables.add(a);
+void setupGlobalVariables() {
 }
+
 
 
 /** @mainpage

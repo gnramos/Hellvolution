@@ -4,104 +4,141 @@
  * @author Guilherme N. Ramos (gnramos@unb.br)
  */
 
-/** Classe base para componentes. */
 abstract class Component {
 }
 
-/** Define uma forma. */
-class ShapeComponent extends Component implements Displayable {
-  float size; /** Tamanho da forma. */
+class Movement2DComponent extends Component implements Updatable {
+  PVector velocity;
+  PVector acceleration;
 
-  /** Construtor. */
+  Movement2DComponent(PVector velocity, PVector acceleration) {
+assert velocity != null: 
+    "Velocidade não pode ser nula.";
+assert acceleration != null: 
+    "Aceleração não pode ser nula.";
+
+    this.velocity = velocity;
+    this.acceleration = acceleration;
+  }
+
+  void update() {
+    velocity.add(acceleration);
+  }
+
+  float currentSpeed() {
+    return velocity.mag();
+  }
+}
+
+class PositionComponent extends Component {
+  PVector location;
+  float   headingAngle;
+
+  PositionComponent(float x, float y, float z, float headingAngle) { 
+    this.location = new PVector(x, y, z);
+    this.headingAngle = headingAngle;
+  }
+}
+
+abstract class ShapeComponent extends Component implements Displayable {
+  float size;
+
   ShapeComponent(float size) {
 assert size > 0 : 
     "Tamanho \"" + size + "\" inválido.";
 
     this.size = size;
   }
-
-  /** Desenha a forma. */
-  void display() {
-    ellipse(0, 0, this.size, this.size);
-  }
 }
 
-/** Define uma posição. */
-class PositionComponent extends Component {
-  PVector location; /**< Localização. */
-  float   angle;    /**< Orientação. */
-
-  /** Construtor. */
-  PositionComponent(float x, /**< Coordenada X. */ 
-  float y, /**< Coordenada Y. */
-  float z, /**< Coordenada Z. */
-  float angle /**< Orientação. */
-  ) { 
-    this.location = new PVector(x, y, z);
-    this.angle = angle;
-  }
-}
-
-/** Define o estilo de coloração. */
 class StyleComponent extends Component {
-  color fill;         /**< Cor do preenchimento. */
-  color stroke;       /**< Cor da linha. */
-  float strokeWeight; /**< Espessura da linha. */
+  color fillColor;
+  color strokeColor;
+  float strokeWeight;
 
-  /** Construtor. */
-  StyleComponent(color fill, color stroke, float strokeWeight) {
-    this.fill = fill;
-    this.stroke = stroke;
+  StyleComponent(color fillColor, color strokeColor, float strokeWeight) {
+    this.fillColor = fillColor;
+    this.strokeColor = strokeColor;
     this.strokeWeight = strokeWeight;
   }
 
-  /** Define o estilo. */
+  /** Implementa o estilo. */
   void push() {
-    fill(this.fill);
-    stroke(this.stroke);
+    fill(this.fillColor);
+    stroke(this.strokeColor);
     strokeWeight(this.strokeWeight);
   }
-  
-  /** Define o estilo trocando as cores. */
+
+  /** Implementa o estilo trocando as cores. */
   void pushInverse() {    
-    fill(this.stroke);
-    stroke(this.fill);
+    fill(this.strokeColor);
+    stroke(this.fillColor);
     strokeWeight(this.strokeWeight);
   }
 }
 
-/** Define a movimentação. */
-class MoveComponent extends Component implements Updatable {
-  PVector location;     /**< Localização. */
-  PVector velocity;     /**< Velocidade do componente. */
-  PVector acceleration; /**< Aceleração do componente. */
-  float   maxSpeed;     /**< Velocidade máxima permitida. */
 
-  /** Construtor. */
-  MoveComponent(float maxSpeed, /**< Velocidade máxima permitida. */ 
-  PositionComponent positioning /**< Componente que define a posição. */) {
-assert maxSpeed >= 0: 
-    "Velocidade máxima não pode ser negativa.";
-assert positioning != null: 
-    "Localização não pode ser nula.";
+/*************************
+ * Componentes compostos *
+ *************************/
+ 
+class Physics2DComponent extends Component implements Updatable {
+  float mass;
+  Movement2DComponent movement;
+  PositionComponent position;
 
-    this.location = positioning.location;
-    this.velocity = new PVector();
-    this.acceleration = new PVector();
-    this.maxSpeed = maxSpeed;
+  Physics2DComponent(float mass, Movement2DComponent movement, PositionComponent position) {
+assert mass >= 0: 
+    "Massa não pode ser negativa.";
+assert movement != null: 
+    "Movement2DComponent não pode ser nulo.";
+assert position != null: 
+    "PositionComponent não pode ser nulo.";
+    
+    this.mass = mass;
+    this.movement = movement;
+    this.position = position;
   }
 
-  // Overload
   void update() {
-    acceleration.limit(Configs.Actions.Movement.MaxAcceleration);
-    velocity.add(acceleration);
-    velocity.limit(maxSpeed);
-    location.add(velocity);
-    acceleration.mult(0);
-  }
-  
-  /** Retorna a magnitude da velocidade atual. */
-  float currentSpeed() {
-    return velocity.mag();
+    movement.acceleration.div(mass);
+    movement.update();
+    position.location.add(movement.velocity);
   }
 }
+
+class BodyComponent extends Component implements Displayable, Updatable {
+  ShapeComponent    shape;
+  StyleComponent    style;
+  Physics2DComponent physics2D;
+
+  BodyComponent(ShapeComponent shape, StyleComponent style, Physics2DComponent physics2D) {
+assert shape != null : 
+    "Não é possível criar um corpo com ShapeComponent nulo.";
+assert style != null : 
+    "Não é possível criar um corpo com StyleComponent nulo.";
+assert physics2D != null : 
+    "Não é possível criar um corpo com Physics2DComponent nulo.";
+
+    this.shape = shape;
+    this.style = style;
+    this.physics2D = physics2D;
+  }
+
+  void display() {
+    pushMatrix();
+
+    translate(physics2D);
+    rotate(physics2D);    
+
+    style.push();
+    shape.display();
+
+    popMatrix();
+  }
+
+  void update() {
+    physics2D.update();
+  }
+}
+
