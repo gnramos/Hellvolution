@@ -81,7 +81,7 @@ class StyleComponent extends Component {
 /*************************
  * Componentes compostos *
  *************************/
- 
+
 class Physics2DComponent extends Component implements Updatable {
   float mass;
   Movement2DComponent movement;
@@ -89,12 +89,12 @@ class Physics2DComponent extends Component implements Updatable {
 
   Physics2DComponent(float mass, Movement2DComponent movement, PositionComponent position) {
 assert mass >= 0: 
-    "Massa não pode ser negativa.";
+    "Não é possível criar Physics2DComponent com massa negativa.";
 assert movement != null: 
-    "Movement2DComponent não pode ser nulo.";
+    "Não é possível criar Physics2DComponent com Movement2DComponent nulo.";
 assert position != null: 
-    "PositionComponent não pode ser nulo.";
-    
+    "Não é possível criar Physics2DComponent com PositionComponent nulo.";
+
     this.mass = mass;
     this.movement = movement;
     this.position = position;
@@ -125,14 +125,20 @@ assert physics2D != null :
     this.physics2D = physics2D;
   }
 
+  void displayHeading() {
+    fill(style.strokeColor);
+    line(0, 0, shape.size, 0);
+  }
+
   void display() {
     pushMatrix();
 
     translate(physics2D);
-    rotate(physics2D);    
+    rotate(physics2D);        
 
     style.push();
     shape.display();
+    displayHeading();
 
     popMatrix();
   }
@@ -145,19 +151,38 @@ assert physics2D != null :
 class Unnamed {
   BodyComponent body;
   SteeringBehavior behavior;
-  
+
   Unnamed(BodyComponent body, SteeringBehavior behavior) {
     this.body = body;
     this.behavior = behavior;
   }
-  
+
   void update() {
     body.physics2D.movement.acceleration.add(behavior.steeringForce());
     body.update();
     body.physics2D.movement.acceleration.mult(0);
   }
+
+  void dummyDisplayExtras() {
+    pushMatrix();
+    translate(body.physics2D);
+    // velocity
+    strokeWeight(3);
+    stroke(#0000FF);
+    line(0, 0, body.physics2D.movement.velocity.x*10, body.physics2D.movement.velocity.y*10);
+
+
+    // obstacle Force
+    stroke(#FF0000);
+    WallSensor sensor = (WallSensor)((WallAvoidanceBehavior)behavior).sensor;
+    line(0, 0, -sensor.obstacleLocation.x, -sensor.obstacleLocation.y);
+    popMatrix();
+  }
+
   void display() {
     body.display();
+
+    dummyDisplayExtras();
   }
 }
 

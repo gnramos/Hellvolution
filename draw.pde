@@ -6,9 +6,12 @@
 
 Unnamed b = randomUnnamed();
 void draw() {
-  background(Configs.Processing.Environment.BackgroundColor);
+  drawBackground();
   
   b.update();
   b.display();
 }
 
+void drawBackground() { 
+  background(Configs.Processing.Environment.BackgroundColor);
+}
