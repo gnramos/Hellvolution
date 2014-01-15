@@ -4,9 +4,10 @@
  * @author Guilherme N. Ramos (gnramos@unb.br)
  */
 
-BodyComponent b = randomBodyComponent();
-
+Unnamed b = randomUnnamed();
 void draw() {
+  background(Configs.Processing.Environment.BackgroundColor);
+  
   b.update();
   b.display();
 }

@@ -45,7 +45,7 @@ StyleComponent randomStyleComponent() {
 }
 
 PositionComponent randomPositionComponent() {
-  return new PositionComponent(random(width), random(height), 0, random(TWO_PI));
+  return new PositionComponent(250, 250/*random(width), random(height)*/, 0, random(TWO_PI));
 }
 
 Movement2DComponent randomMovement2DComponent() {
@@ -64,6 +64,11 @@ BodyComponent randomBodyComponent() {
   return new BodyComponent(randomShapeComponent(), randomStyleComponent(), randomPhysics2DComponent());
 }
 
+Unnamed randomUnnamed() {
+  BodyComponent body = randomBodyComponent();
+  WallSensor wallSensor = new WallSensor(body.physics2D.position, 2*body.shape.size);
+  return new Unnamed(body, new WallAvoidanceBehavior(wallSensor));
+}
 
 /**************
  * Interfaces *

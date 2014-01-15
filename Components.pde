@@ -142,3 +142,22 @@ assert physics2D != null :
   }
 }
 
+class Unnamed {
+  BodyComponent body;
+  SteeringBehavior behavior;
+  
+  Unnamed(BodyComponent body, SteeringBehavior behavior) {
+    this.body = body;
+    this.behavior = behavior;
+  }
+  
+  void update() {
+    body.physics2D.movement.acceleration.add(behavior.steeringForce());
+    body.update();
+    body.physics2D.movement.acceleration.mult(0);
+  }
+  void display() {
+    body.display();
+  }
+}
+
