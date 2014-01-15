@@ -4,12 +4,13 @@
  * @author Guilherme N. Ramos (gnramos@unb.br)
  */
 
-Unnamed b = randomUnnamed();
 void draw() {
   drawBackground();
   
-  b.update();
-  b.display();
+  for(Unnamed u : unnamedList) {
+    u.update();
+    u.display();
+  }
 }
 
 void drawBackground() { 

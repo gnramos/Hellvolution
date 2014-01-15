@@ -44,8 +44,13 @@ void setupShapeAttributes() {
 }
 
 /* Variáveis globais */
+ArrayList<Unnamed> unnamedList;
 
 void setupGlobalVariables() {
+  unnamedList = new ArrayList<Unnamed>();
+  unnamedList.add(randomUnnamed());
+  unnamedList.add(randomUnnamed());
+  unnamedList.add(randomUnnamed());
 }
 
 
