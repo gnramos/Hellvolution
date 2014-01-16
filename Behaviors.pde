@@ -19,6 +19,40 @@ abstract class SteeringBehavior extends Behavior {
   abstract PVector steeringForce();
 }
 
+class Steering {
+  ArrayList<SteeringBehavior> behaviors;  
+
+  Steering(ArrayList<SteeringBehavior> behaviors) {
+assert behaviors != null : 
+    "Não é possível criar Steering com ArrayList<SteeringBehavior> nulo.";
+
+    this.behaviors = behaviors;
+  }
+
+  void accumulateForces(PVector runningTotal) {
+    for (SteeringBehavior behavior : behaviors)
+      if (!accumulateForce(runningTotal, behavior.steeringForce()))
+        break;
+  }
+
+  boolean accumulateForce(PVector runningTotal, PVector forceToAdd) {
+    float magnitudeRemaining = Configs.Behavior.Steering.Max.Force - runningTotal.mag();
+
+    if (magnitudeRemaining <= 0) 
+      return false;
+
+    double magnitudeToAdd = forceToAdd.mag();
+
+    if (magnitudeToAdd > magnitudeRemaining) {
+      forceToAdd.normalize();
+      forceToAdd.mult(magnitudeRemaining);
+    }
+    runningTotal.add(forceToAdd);
+
+    return true;
+  }
+}
+
 class WallAvoidanceBehavior extends SteeringBehavior {
   WallSensor sensor;
 

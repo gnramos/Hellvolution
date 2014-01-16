@@ -143,29 +143,32 @@ assert physics2D != null :
     popMatrix();
   }
 
-  void update() {
+  void updatePhysics2D() {
     physics2D.update();
+  }
+
+  void update() {
+    updatePhysics2D();
   }
 }
 
 class Unnamed {
   BodyComponent body;
-  ArrayList<SteeringBehavior> behaviors;
+  Steering steering;
 
-  Unnamed(BodyComponent body, ArrayList<SteeringBehavior> behaviors) {
+  Unnamed(BodyComponent body, Steering steering) {
     this.body = body;
-    this.behaviors = behaviors;
+    this.steering = steering;
   }
-  
-  void updateSteeringBehaviors() {
-    for(SteeringBehavior behavior : behaviors)
-      body.physics2D.movement.acceleration.add(behavior.steeringForce());
-    body.update();
+
+  void steer() {
+    steering.accumulateForces(body.physics2D.movement.acceleration);
+    body.updatePhysics2D();
     body.physics2D.movement.acceleration.mult(0);
   }
 
   void update() {
-    updateSteeringBehaviors();
+    steer();
   }
 
   void dummyDisplayExtras() {
@@ -179,7 +182,7 @@ class Unnamed {
 
     // obstacle Force
     stroke(#FF0000);
-    WallSensor sensor = (WallSensor)((WallAvoidanceBehavior)behaviors.get(0)).sensor;
+    WallSensor sensor = (WallSensor)((WallAvoidanceBehavior)steering.behaviors.get(0)).sensor;
     line(0, 0, -sensor.obstacleLocation.x, -sensor.obstacleLocation.y);
     popMatrix();
   }

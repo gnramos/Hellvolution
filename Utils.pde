@@ -71,7 +71,8 @@ Unnamed randomUnnamed() {
   ArrayList<SteeringBehavior> behaviors = new ArrayList<SteeringBehavior>();
   behaviors.add(new WallAvoidanceBehavior(wallSensor));
   behaviors.add(new WanderingBehavior());
-  return new Unnamed(body, behaviors);
+  Steering steering = new Steering(behaviors);
+  return new Unnamed(body, steering);
 }
 
 /**************

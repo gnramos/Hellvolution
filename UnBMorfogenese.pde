@@ -48,9 +48,8 @@ ArrayList<Unnamed> unnamedList;
 
 void setupGlobalVariables() {
   unnamedList = new ArrayList<Unnamed>();
-  unnamedList.add(randomUnnamed());
-  unnamedList.add(randomUnnamed());
-  unnamedList.add(randomUnnamed());
+  for(int i = 0; i <5; i++)
+    unnamedList.add(randomUnnamed());
 }
 
 
