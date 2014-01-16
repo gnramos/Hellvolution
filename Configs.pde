@@ -10,6 +10,11 @@ static class Configs {
       static class Max {
         static final float Force = 50;
       }
+      
+      static class Weight {
+        static final float WallAvoidance = 5;
+        static final float Wandering = 1;
+      }
     }
   }
 

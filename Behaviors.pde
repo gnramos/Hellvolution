@@ -13,7 +13,12 @@ abstract class Behavior {
 }
 
 abstract class SteeringBehavior extends Behavior {
-  SteeringBehavior() {
+  float weight;
+
+  SteeringBehavior(float weight) {
+assert weight != 0 :
+    "Não é possível criar SteeringBehavior com weight = 0.";
+    this.weight = weight;
   }
 
   abstract PVector steeringForce();
@@ -30,9 +35,12 @@ assert behaviors != null :
   }
 
   void accumulateForces(PVector runningTotal) {
-    for (SteeringBehavior behavior : behaviors)
-      if (!accumulateForce(runningTotal, behavior.steeringForce()))
+    for (SteeringBehavior behavior : behaviors) {
+      PVector force = behavior.steeringForce();
+      force.mult(behavior.weight);
+      if (!accumulateForce(runningTotal, force))
         break;
+    }
   }
 
   boolean accumulateForce(PVector runningTotal, PVector forceToAdd) {
@@ -57,11 +65,12 @@ class WallAvoidanceBehavior extends SteeringBehavior {
   WallSensor sensor;
 
   WallAvoidanceBehavior(WallSensor sensor) {
+    super(Configs.Behavior.Steering.Weight.WallAvoidance);
+
 assert sensor != null :
     "Não é possível criar WallAvoidanceBehavior com WallSensor nulo.";
 
     this.sensor = sensor;
-    this.enabled = true;
   }
 
   boolean avoidingWalls() {
@@ -91,6 +100,10 @@ assert sensor != null :
 }
 
 class WanderingBehavior extends SteeringBehavior {
+  WanderingBehavior() {
+    super(Configs.Behavior.Steering.Weight.Wandering);
+  }
+  
   PVector steeringForce() {
     PVector force = PVector.random2D();
     force.normalize();
