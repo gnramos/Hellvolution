@@ -56,3 +56,11 @@ assert sensor != null :
   }
 }
 
+class WanderingBehavior extends SteeringBehavior {
+  PVector steeringForce() {
+    PVector force = PVector.random2D();
+    force.normalize();
+    return force;
+  }
+}
+

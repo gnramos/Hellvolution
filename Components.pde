@@ -150,17 +150,22 @@ assert physics2D != null :
 
 class Unnamed {
   BodyComponent body;
-  SteeringBehavior behavior;
+  ArrayList<SteeringBehavior> behaviors;
 
-  Unnamed(BodyComponent body, SteeringBehavior behavior) {
+  Unnamed(BodyComponent body, ArrayList<SteeringBehavior> behaviors) {
     this.body = body;
-    this.behavior = behavior;
+    this.behaviors = behaviors;
+  }
+  
+  void updateSteeringBehaviors() {
+    for(SteeringBehavior behavior : behaviors)
+      body.physics2D.movement.acceleration.add(behavior.steeringForce());
+    body.update();
+    body.physics2D.movement.acceleration.mult(0);
   }
 
   void update() {
-    body.physics2D.movement.acceleration.add(behavior.steeringForce());
-    body.update();
-    body.physics2D.movement.acceleration.mult(0);
+    updateSteeringBehaviors();
   }
 
   void dummyDisplayExtras() {
@@ -174,7 +179,7 @@ class Unnamed {
 
     // obstacle Force
     stroke(#FF0000);
-    WallSensor sensor = (WallSensor)((WallAvoidanceBehavior)behavior).sensor;
+    WallSensor sensor = (WallSensor)((WallAvoidanceBehavior)behaviors.get(0)).sensor;
     line(0, 0, -sensor.obstacleLocation.x, -sensor.obstacleLocation.y);
     popMatrix();
   }
