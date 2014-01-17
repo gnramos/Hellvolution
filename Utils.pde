@@ -45,7 +45,7 @@ StyleComponent randomStyleComponent() {
 }
 
 PositionComponent randomPositionComponent() {
-  return new PositionComponent(250, 250/*random(width), random(height)*/, 0, random(TWO_PI));
+  return new PositionComponent(random(width), random(height), 0, random(TWO_PI));
 }
 
 Movement2DComponent randomMovement2DComponent() {
@@ -60,19 +60,32 @@ Physics2DComponent randomPhysics2DComponent() {
   return new Physics2DComponent(randomMass(), randomMovement2DComponent(), randomPositionComponent());
 }
 
+static float sizeToMass(float size) {
+  return map(size, Configs.Component.Shape.Min.Size, Configs.Component.Shape.Max.Size,Configs.Component.Physics2D.Min.Mass, Configs.Component.Physics2D.Max.Mass);
+}
+static float massToSize(float mass) {
+  return map(mass,Configs.Component.Physics2D.Min.Mass, Configs.Component.Physics2D.Max.Mass, Configs.Component.Shape.Min.Size, Configs.Component.Shape.Max.Size);
+}
+
 BodyComponent randomBodyComponent() {
-  return new BodyComponent(randomShapeComponent(), randomStyleComponent(), randomPhysics2DComponent());
+  ShapeComponent shape = randomShapeComponent();
+  Physics2DComponent physics2D = randomPhysics2DComponent();
+  physics2D.mass = sizeToMass(shape.size);
+  return new BodyComponent(shape, randomStyleComponent(), physics2D);
 }
 
 Unnamed randomUnnamed() {
   BodyComponent body = randomBodyComponent();
-  WallSensor wallSensor = new WallSensor(body.physics2D.position, 2*body.shape.size);
-  
   ArrayList<SteeringBehavior> behaviors = new ArrayList<SteeringBehavior>();
-  behaviors.add(new WallAvoidanceBehavior(wallSensor));
-  behaviors.add(new WanderingBehavior());
-  Steering steering = new Steering(behaviors);
-  return new Unnamed(body, steering);
+  Steering steering = new Steering(behaviors);  
+  Unnamed unnamed = new Unnamed(body, steering);
+  
+  WallSensor wallSensor = new WallSensor(body.physics2D.position, 2*body.shape.size);
+  behaviors.add(new WallAvoidanceBehavior(unnamed, wallSensor));
+  behaviors.add(new SeekBehavior(unnamed, mouse));
+  behaviors.add(new WanderingBehavior(unnamed));
+  
+  return unnamed; 
 }
 
 /**************

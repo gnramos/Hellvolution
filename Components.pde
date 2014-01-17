@@ -89,7 +89,7 @@ class Physics2DComponent extends Component implements Updatable {
 
   Physics2DComponent(float mass, Movement2DComponent movement, PositionComponent position) {
 assert mass >= 0: 
-    "Não é possível criar Physics2DComponent com massa negativa.";
+    "Não é possível criar Physics2DComponent com massa não positiva.";
 assert movement != null: 
     "Não é possível criar Physics2DComponent com Movement2DComponent nulo.";
 assert position != null: 
@@ -100,9 +100,14 @@ assert position != null:
     this.position = position;
   }
 
+  float maxSpeed() {
+    return Configs.Component.Physics2D.MassToSpeedRatio/mass;
+  }
+
   void update() {
     movement.acceleration.div(mass);
     movement.update();
+    movement.velocity.limit(maxSpeed());
     position.location.add(movement.velocity);
   }
 }

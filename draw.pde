@@ -7,6 +7,9 @@
 void draw() {
   drawBackground();
   
+  mouse.x = mouseX;
+  mouse.y = mouseY;
+  
   for(Unnamed u : unnamedList) {
     u.update();
     u.display();

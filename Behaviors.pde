@@ -13,16 +13,97 @@ abstract class Behavior {
 }
 
 abstract class SteeringBehavior extends Behavior {
+  Unnamed owner;
   float weight;
 
-  SteeringBehavior(float weight) {
+  SteeringBehavior(Unnamed owner, float weight) {
+assert owner != null :
+    "Não é possível criar SteeringBehavior sem owner.";
 assert weight != 0 :
     "Não é possível criar SteeringBehavior com weight = 0.";
+
+    this.owner = owner;
     this.weight = weight;
   }
 
   abstract PVector steeringForce();
 }
+
+class SeekBehavior extends SteeringBehavior {
+  PVector target;
+
+  SeekBehavior(Unnamed owner, PVector target) {
+    super(owner, Configs.Behavior.Steering.Weight.Seek);
+
+    this.target = target;
+  }
+
+  PVector computeSeekForce() {
+    if (target == null) return new PVector();
+
+    PVector force = PVector.sub(target, owner.body.physics2D.position.location);
+    force.normalize();
+    force.mult(owner.body.physics2D.maxSpeed());
+    force.sub(owner.body.physics2D.movement.velocity);
+    return force;
+  }
+
+  PVector steeringForce() {
+    if (!enabled) return new PVector();
+
+    return computeSeekForce();
+  }
+}
+
+class WallAvoidanceBehavior extends SteeringBehavior {
+  WallSensor sensor;
+
+  WallAvoidanceBehavior(Unnamed owner, WallSensor sensor) {
+    super(owner, Configs.Behavior.Steering.Weight.WallAvoidance);
+
+    this.sensor = sensor;
+  }
+
+  boolean avoidingWalls() {
+    return (sensor != null && sensor.enabled && sensor.obstacleLocation.mag() > 0);
+  }
+
+  PVector computeAvoidanceForce() {
+    PVector force = new PVector();
+
+    if (avoidingWalls()) {
+      sensor.read();
+      // força deve ser proporcional na direção oposta ao obstáculo.
+      if (sensor.obstacleLocation.x != 0) force.x = -sensor.range/sensor.obstacleLocation.x;
+      if (sensor.obstacleLocation.y != 0) force.y = -sensor.range/sensor.obstacleLocation.y;
+      if (sensor.obstacleLocation.z != 0) force.z = -sensor.range/sensor.obstacleLocation.z;
+      //force.mult(owner.body.move.currentSpeed());
+    }
+    return force;
+  }
+
+  PVector steeringForce() {
+    if (!enabled) return new PVector();
+
+    return computeAvoidanceForce();
+  }
+}
+
+class WanderingBehavior extends SteeringBehavior {
+  WanderingBehavior(Unnamed owner) {
+    super(owner, Configs.Behavior.Steering.Weight.Wandering);
+  }
+
+  PVector steeringForce() {
+    if (!enabled) return new PVector();
+
+    PVector force = PVector.random2D();
+    force.normalize();
+    return force;
+  }
+}
+
+/*********/
 
 class Steering {
   ArrayList<SteeringBehavior> behaviors;  
@@ -58,56 +139,6 @@ assert behaviors != null :
     runningTotal.add(forceToAdd);
 
     return true;
-  }
-}
-
-class WallAvoidanceBehavior extends SteeringBehavior {
-  WallSensor sensor;
-
-  WallAvoidanceBehavior(WallSensor sensor) {
-    super(Configs.Behavior.Steering.Weight.WallAvoidance);
-
-assert sensor != null :
-    "Não é possível criar WallAvoidanceBehavior com WallSensor nulo.";
-
-    this.sensor = sensor;
-  }
-
-  boolean avoidingWalls() {
-    return (sensor.enabled && sensor.obstacleLocation.mag() > 0);
-  }
-
-  PVector computeAvoidanceForce() {
-    // força deve ser proporcional na direção oposta ao obstáculo.
-    PVector force = new PVector();
-    sensor.read();
-    if (sensor.obstacleLocation.mag() > 0) {
-      if (sensor.obstacleLocation.x != 0) force.x = -sensor.range/sensor.obstacleLocation.x;
-      if (sensor.obstacleLocation.y != 0) force.y = -sensor.range/sensor.obstacleLocation.y;
-      if (sensor.obstacleLocation.z != 0) force.z = -sensor.range/sensor.obstacleLocation.z;
-      //force.mult(owner.body.move.currentSpeed());
-    }
-    return force;
-  }
-
-  PVector steeringForce() {
-    PVector force = new PVector();
-
-    if (enabled) force = computeAvoidanceForce();
-
-    return force;
-  }
-}
-
-class WanderingBehavior extends SteeringBehavior {
-  WanderingBehavior() {
-    super(Configs.Behavior.Steering.Weight.Wandering);
-  }
-  
-  PVector steeringForce() {
-    PVector force = PVector.random2D();
-    force.normalize();
-    return force;
   }
 }
 

@@ -19,7 +19,7 @@ void setupColor() {
 
 void setupFrameSize() {
   frame.setResizable(Configs.Processing.Environment.Frame.Resizable);
-  
+
   int w = int(Configs.Processing.Environment.Frame.ToDisplayRatio*displayWidth);
   int h = int(Configs.Processing.Environment.Frame.ToDisplayRatio*displayHeight);
 
@@ -45,10 +45,13 @@ void setupShapeAttributes() {
 
 /* Variáveis globais */
 ArrayList<Unnamed> unnamedList;
+PVector mouse;
 
 void setupGlobalVariables() {
+  mouse = new PVector();
+
   unnamedList = new ArrayList<Unnamed>();
-  for(int i = 0; i <5; i++)
+  for (int i = 0; i <5; i++)
     unnamedList.add(randomUnnamed());
 }
 

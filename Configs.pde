@@ -12,7 +12,8 @@ static class Configs {
       }
       
       static class Weight {
-        static final float WallAvoidance = 5;
+        static final float Seek = 2;
+        static final float WallAvoidance = 10;
         static final float Wandering = 1;
       }
     }
@@ -20,6 +21,7 @@ static class Configs {
 
   static class Component {
     static class Physics2D {
+        static final float MassToSpeedRatio = 50;
       static class Max {
         static final float Mass = 100;
       }
@@ -28,6 +30,7 @@ static class Configs {
         static final float Mass = 5;
       }
     }
+    
     static class Shape {
       static class Max {
         static final float Size = 25;
