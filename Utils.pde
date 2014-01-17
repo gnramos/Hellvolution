@@ -82,8 +82,8 @@ Unnamed randomUnnamed() {
   
   WallSensor wallSensor = new WallSensor(body.physics2D.position, 2*body.shape.size);
   behaviors.add(new WallAvoidanceBehavior(unnamed, wallSensor));
-  behaviors.add(new SeekBehavior(unnamed, mouse));
-  behaviors.add(new WanderingBehavior(unnamed));
+//  behaviors.add(new FleeBehavior(unnamed, mouse));
+//  behaviors.add(new WanderingBehavior(unnamed));
   
   return unnamed; 
 }

@@ -12,6 +12,7 @@ static class Configs {
       }
       
       static class Weight {
+        static final float Flee = 2;
         static final float Seek = 2;
         static final float WallAvoidance = 10;
         static final float Wandering = 1;
