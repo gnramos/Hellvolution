@@ -29,6 +29,22 @@ assert weight != 0 :
   abstract PVector steeringForce();
 }
 
+static PVector computeSeekingForce(Physics2DComponent physics2D, PVector target) {
+  if (target == null || physics2D == null) return new PVector();
+
+  PVector force = PVector.sub(target, physics2D.position.location);
+  force.normalize();
+  force.mult(physics2D.maxSpeed());
+  force.sub(physics2D.movement.velocity);
+  return force;
+}
+
+static PVector computeFleeingForce(Physics2DComponent physics2D, PVector target) {
+    PVector force = computeSeekingForce(physics2D, target);
+    force.mult(-1);
+    return force;
+}
+
 class FleeBehavior extends SteeringBehavior {
   PVector target;
 
@@ -38,34 +54,26 @@ class FleeBehavior extends SteeringBehavior {
     this.target = target;
   }
 
-  PVector computeFleeForce() {
-    if (target == null) return new PVector();
+  PVector steeringForce() {
+    if (!enabled) return new PVector();
 
-    PVector force = PVector.sub(owner.body.physics2D.position.location, target);
-    force.normalize();
-    force.mult(owner.body.physics2D.maxSpeed());
-    force.sub(owner.body.physics2D.movement.velocity);
-    return force;
+    return computeFleeingForce(owner.body.physics2D, target);
+  }
+}
+
+class SeekBehavior extends SteeringBehavior {
+  PVector target;
+
+  SeekBehavior(Unnamed owner, PVector target) {
+    super(owner, Configs.Behavior.Steering.Weight.Seek);
+
+    this.target = target;
   }
 
   PVector steeringForce() {
     if (!enabled) return new PVector();
 
-    return computeFleeForce();
-  }
-}
-
-class SeekBehavior extends FleeBehavior {
-  SeekBehavior(Unnamed owner, PVector target) {
-    super(owner, target);
-
-    this.weight = Configs.Behavior.Steering.Weight.Seek;
-  }
-
-  PVector steeringForce() {
-    PVector force = super.steeringForce();
-    force.mult(-1);
-    return force;
+    return computeSeekingForce(owner.body.physics2D, target);
   }
 }
 
@@ -87,7 +95,7 @@ class WallAvoidanceBehavior extends SteeringBehavior {
 
     if (avoidingWalls()) {
       sensor.read();
-      if(sensor.obstacleLocation.mag() > 0) {
+      if (sensor.obstacleLocation.mag() > 0) {
         // força deve ser proporcional na direção oposta ao obstáculo.
         if (sensor.obstacleLocation.x != 0) force.x = -sensor.range/sensor.obstacleLocation.x;
         if (sensor.obstacleLocation.y != 0) force.y = -sensor.range/sensor.obstacleLocation.y;
