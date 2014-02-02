@@ -40,9 +40,9 @@ static PVector computeSeekingForce(Physics2DComponent physics2D, PVector target)
 }
 
 static PVector computeFleeingForce(Physics2DComponent physics2D, PVector target) {
-    PVector force = computeSeekingForce(physics2D, target);
-    force.mult(-1);
-    return force;
+  PVector force = computeSeekingForce(physics2D, target);
+  force.mult(-1);
+  return force;
 }
 
 class FleeBehavior extends SteeringBehavior {
@@ -78,22 +78,19 @@ class SeekBehavior extends SteeringBehavior {
 }
 
 class WallAvoidanceBehavior extends SteeringBehavior {
-  WallSensor sensor;
-
-  WallAvoidanceBehavior(Specimen owner, WallSensor sensor) {
+  WallAvoidanceBehavior(Specimen owner) {
     super(owner, Configs.Behavior.Steering.Weight.WallAvoidance);
-
-    this.sensor = sensor;
   }
 
   boolean avoidingWalls() {
-    return (sensor != null && sensor.enabled);
+    return (owner.sensors.wall != null && owner.sensors.wall.enabled);
   }
 
   PVector computeAvoidanceForce() {
     PVector force = new PVector();
 
     if (avoidingWalls()) {
+      WallSensor sensor = owner.sensors.wall;
       sensor.read();
       if (sensor.obstacleLocation.mag() > 0) {
         // força deve ser proporcional na direção oposta ao obstáculo.

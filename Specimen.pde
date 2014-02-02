@@ -56,18 +56,22 @@ class Specimen {
     line(0, 0, body.physics2D.movement.velocity.x*10, body.physics2D.movement.velocity.y*10);
 
     // obstacle Force
-    stroke(#FF0000);
-    WallSensor sensor = (WallSensor)((WallAvoidanceBehavior)steering.behaviors.get(0)).sensor;
-    line(0, 0, -sensor.obstacleLocation.x, -sensor.obstacleLocation.y);
+    if (sensors.wall != null) {
+      stroke(#FF0000);
+      WallSensor sensor = sensors.wall;
+      line(0, 0, -sensor.obstacleLocation.x, -sensor.obstacleLocation.y);
+    }
 
     // Sensor para Specimen
-    strokeWeight(1);
-    stroke(body.style.strokeColor);
-    noFill();
-    ellipse(0, 0, this.sensors.specimen.range, this.sensors.specimen.range);
-    for (Specimen unnamed : this.sensors.specimen.visible) {
-      PVector d = PVector.sub(unnamed.sensors.specimen.position.location.get(), this.body.physics2D.position.location);
-      line(0, 0, d.x, d.y);
+    if (sensors.specimen != null) {
+      strokeWeight(1);
+      stroke(body.style.strokeColor);
+      noFill();
+      ellipse(0, 0, this.sensors.specimen.range, this.sensors.specimen.range);
+      for (Specimen unnamed : this.sensors.specimen.visible) {
+        PVector d = PVector.sub(unnamed.sensors.specimen.position.location.get(), this.body.physics2D.position.location);
+        line(0, 0, d.x, d.y);
+      }
     }
 
     popMatrix();

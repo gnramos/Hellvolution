@@ -83,14 +83,14 @@ Specimen randomSpecimen() {
   BodyComponent body = randomBodyComponent();
   ArrayList<SteeringBehavior> behaviors = new ArrayList<SteeringBehavior>();
   Steering steering = new Steering(behaviors);  
-  Specimen unnamed = new Specimen(body, steering);
+  Specimen specimen = new Specimen(body, steering);
   
-  WallSensor wallSensor = new WallSensor(body.physics2D.position, 2*body.shape.size);
-  behaviors.add(new WallAvoidanceBehavior(unnamed, wallSensor));
-  behaviors.add(new WanderingBehavior(unnamed));
-  behaviors.add(new FleeBehavior(unnamed, mouse));
+  specimen.sensors.wall = new WallSensor(body.physics2D.position, 2*body.shape.size);
+  behaviors.add(new WallAvoidanceBehavior(specimen));
+  behaviors.add(new WanderingBehavior(specimen));
+  behaviors.add(new FleeBehavior(specimen, mouse));
   
-  return unnamed; 
+  return specimen; 
 }
 
 /**************
