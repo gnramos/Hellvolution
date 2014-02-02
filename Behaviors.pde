@@ -13,10 +13,10 @@ abstract class Behavior {
 }
 
 abstract class SteeringBehavior extends Behavior {
-  Unnamed owner;
+  Specimen owner;
   float weight;
 
-  SteeringBehavior(Unnamed owner, float weight) {
+  SteeringBehavior(Specimen owner, float weight) {
 assert owner != null :
     "Não é possível criar SteeringBehavior sem owner.";
 assert weight != 0 :
@@ -48,7 +48,7 @@ static PVector computeFleeingForce(Physics2DComponent physics2D, PVector target)
 class FleeBehavior extends SteeringBehavior {
   PVector target;
 
-  FleeBehavior(Unnamed owner, PVector target) {
+  FleeBehavior(Specimen owner, PVector target) {
     super(owner, Configs.Behavior.Steering.Weight.Flee);
 
     this.target = target;
@@ -64,7 +64,7 @@ class FleeBehavior extends SteeringBehavior {
 class SeekBehavior extends SteeringBehavior {
   PVector target;
 
-  SeekBehavior(Unnamed owner, PVector target) {
+  SeekBehavior(Specimen owner, PVector target) {
     super(owner, Configs.Behavior.Steering.Weight.Seek);
 
     this.target = target;
@@ -80,7 +80,7 @@ class SeekBehavior extends SteeringBehavior {
 class WallAvoidanceBehavior extends SteeringBehavior {
   WallSensor sensor;
 
-  WallAvoidanceBehavior(Unnamed owner, WallSensor sensor) {
+  WallAvoidanceBehavior(Specimen owner, WallSensor sensor) {
     super(owner, Configs.Behavior.Steering.Weight.WallAvoidance);
 
     this.sensor = sensor;
@@ -114,7 +114,7 @@ class WallAvoidanceBehavior extends SteeringBehavior {
 }
 
 class WanderingBehavior extends SteeringBehavior {
-  WanderingBehavior(Unnamed owner) {
+  WanderingBehavior(Specimen owner) {
     super(owner, Configs.Behavior.Steering.Weight.Wandering);
   }
 

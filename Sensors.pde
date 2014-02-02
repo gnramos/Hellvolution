@@ -17,7 +17,6 @@ abstract class SensorComponent extends Component {
 abstract class ProximitySensor extends SensorComponent {
   PositionComponent position;
   float   range;
-  PVector obstacleLocation; /* Relativa a posição. */
 
   ProximitySensor(PositionComponent position, float range) {
 assert position != null: 
@@ -27,13 +26,16 @@ assert range > 0 :
 
     this.position = position;
     this.range = range;
-    this.obstacleLocation = new PVector();
   }
 }
 
 class WallSensor extends ProximitySensor {
+  PVector obstacleLocation; /* Relativa a posição. */
+  
   WallSensor(PositionComponent position, float range) {
     super(position, range);
+    
+    this.obstacleLocation = new PVector();
   }
 
   float readingToClosestWall(float currentPosition, float positionThreshold) {
@@ -51,16 +53,16 @@ class WallSensor extends ProximitySensor {
   }
 }
 
-class UnnamedSensor extends ProximitySensor {
-  ArrayList<Unnamed> visible;
+class SpecimenSensor extends ProximitySensor {
+  ArrayList<Specimen> visible;
   
-  UnnamedSensor(PositionComponent position, float range) {
+  SpecimenSensor(PositionComponent position, float range) {
     super(position, range);
 
-    visible = new ArrayList<Unnamed>();
+    visible = new ArrayList<Specimen>();
   }
 
-  boolean isVisible(Unnamed that) {
+  boolean isVisible(Specimen that) {
     double d = dist(this.position, that.body.physics2D.position) - that.body.shape.size;
     return (d <= range);
   }
@@ -69,7 +71,7 @@ class UnnamedSensor extends ProximitySensor {
     visible.clear();
     if (!enabled) return;
 
-    for (Unnamed unnamed : unnamedList)
+    for (Specimen unnamed : unnamedList)
       if (isVisible(unnamed))
         visible.add(unnamed);
   }

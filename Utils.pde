@@ -79,11 +79,11 @@ BodyComponent randomBodyComponent() {
   return new BodyComponent(shape, randomStyleComponent(), physics2D);
 }
 
-Unnamed randomUnnamed() {
+Specimen randomSpecimen() {
   BodyComponent body = randomBodyComponent();
   ArrayList<SteeringBehavior> behaviors = new ArrayList<SteeringBehavior>();
   Steering steering = new Steering(behaviors);  
-  Unnamed unnamed = new Unnamed(body, steering);
+  Specimen unnamed = new Specimen(body, steering);
   
   WallSensor wallSensor = new WallSensor(body.physics2D.position, 2*body.shape.size);
   behaviors.add(new WallAvoidanceBehavior(unnamed, wallSensor));

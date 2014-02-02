@@ -113,8 +113,8 @@ assert position != null:
 }
 
 class BodyComponent extends Component implements Displayable, Updatable {
-  ShapeComponent    shape;
-  StyleComponent    style;
+  ShapeComponent     shape;
+  StyleComponent     style;
   Physics2DComponent physics2D;
 
   BodyComponent(ShapeComponent shape, StyleComponent style, Physics2DComponent physics2D) {
@@ -157,62 +157,4 @@ assert physics2D != null :
   }
 }
 
-class Unnamed {
-  BodyComponent body;
-  Steering steering;
-  
-  UnnamedSensor sensor;
-
-  Unnamed(BodyComponent body, Steering steering) {
-    this.body = body;
-    this.steering = steering;
-    
-    sensor = new UnnamedSensor(this.body.physics2D.position, Configs.Component.Sensor.SizeToRangeRatio*this.body.shape.size);
-  }
-
-  void steer() {
-    steering.accumulateForces(body.physics2D.movement.acceleration);
-    body.updatePhysics2D();
-    body.physics2D.movement.acceleration.mult(0);
-  }
-
-  void update() {
-    sensor.read();
-    
-    steer();
-  }
-
-  void dummyDisplayExtras() {
-    pushMatrix();
-    translate(body.physics2D);
-    // velocity
-    strokeWeight(3);
-    stroke(#0000FF);
-    line(0, 0, body.physics2D.movement.velocity.x*10, body.physics2D.movement.velocity.y*10);
-
-
-    // obstacle Force
-    stroke(#FF0000);
-    WallSensor sensor = (WallSensor)((WallAvoidanceBehavior)steering.behaviors.get(0)).sensor;
-    line(0, 0, -sensor.obstacleLocation.x, -sensor.obstacleLocation.y);
-    
-    strokeWeight(1);
-    stroke(body.style.strokeColor);
-    noFill();
-    ellipse(0,0,this.sensor.range,this.sensor.range);
-    for (Unnamed unnamed : this.sensor.visible) {
-        PVector d = unnamed.sensor.position.location.get();
-        d.sub(this.body.physics2D.position.location);
-        line(0, 0, d.x, d.y);
-    }
-    popMatrix();
-      
-  }
-
-  void display() {
-    body.display();
-
-    dummyDisplayExtras();
-  }
-}
 

@@ -44,15 +44,15 @@ void setupShapeAttributes() {
 }
 
 /* Variáveis globais */
-ArrayList<Unnamed> unnamedList;
+ArrayList<Specimen> unnamedList;
 PVector mouse;
 
 void setupGlobalVariables() {
   mouse = new PVector();
 
-  unnamedList = new ArrayList<Unnamed>();
+  unnamedList = new ArrayList<Specimen>();
   for (int i = 0; i <5; i++)
-    unnamedList.add(randomUnnamed());
+    unnamedList.add(randomSpecimen());
 }
 
 

@@ -10,7 +10,7 @@ void draw() {
   mouse.x = mouseX;
   mouse.y = mouseY;
   
-  for(Unnamed u : unnamedList) {
+  for(Specimen u : unnamedList) {
     u.update();
     u.display();
   }
