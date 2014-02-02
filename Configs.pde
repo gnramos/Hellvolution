@@ -12,10 +12,14 @@ static class Configs {
       }
       
       static class Weight {
-        static final float Flee = 0.2;
+        static final float Flee = 2;
+        static final float FlockAlignment = 0.5;
+        static final float FlockCohesion = 0.2;
+        static final float FlockSeparation = 0.3;
+        static final float Flock = 5/(FlockAlignment+FlockCohesion+FlockSeparation);
         static final float Seek = 2;
         static final float WallAvoidance = 10;
-        static final float Wandering = 5;
+        static final float Wandering = 1;
       }
     }
   }

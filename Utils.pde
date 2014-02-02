@@ -88,7 +88,8 @@ Specimen randomSpecimen() {
   specimen.sensors.wall = new WallSensor(body.physics2D.position, 2*body.shape.size);
   behaviors.add(new WallAvoidanceBehavior(specimen));
   behaviors.add(new WanderingBehavior(specimen));
-  behaviors.add(new FleeBehavior(specimen, mouse));
+  behaviors.add(new FlockBehavior(specimen));
+//  behaviors.add(new FleeBehavior(specimen, mouse));
   
   return specimen; 
 }

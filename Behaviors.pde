@@ -61,6 +61,108 @@ class FleeBehavior extends SteeringBehavior {
   }
 }
 
+class FlockBehavior extends SteeringBehavior {
+  FlockBehavior(Specimen owner) {
+    super(owner, Configs.Behavior.Steering.Weight.Flock);
+  }
+
+  /** Alignment (also known as “copy”): Steer in the same direction as your neighbors. */
+  private PVector velocityMatching() {
+    PVector force = new PVector();
+
+    PVector aux;
+    int count = 0;
+    for (Specimen perceived : owner.sensors.specimen.visible) {
+      float desiredseparation = min(owner.body.shape.size, perceived.body.shape.size)*Configs.Component.Sensor.SizeToRangeRatio;
+      float d = dist(owner.body.physics2D.position, perceived.body.physics2D.position);
+      if (d < desiredseparation) {
+        force.add(perceived.body.physics2D.movement.velocity);
+        count++;
+      }
+    }
+    if (count > 0) {
+      force.div((float)count);
+      force.normalize();
+      force.mult(owner.body.physics2D.maxSpeed());
+      force.sub(owner.body.physics2D.movement.velocity);
+    }
+    return force;
+  }
+
+  /** Separation (also known as “avoidance”): Steer to avoid colliding with your neighbors. */
+  private PVector separation() {
+    PVector force = new PVector();
+
+    PVector aux;
+    int count = 0;
+    for (Specimen perceived : owner.sensors.specimen.visible) {
+      float desiredseparation = min(owner.body.shape.size, perceived.body.shape.size)*Configs.Component.Sensor.SizeToRangeRatio;
+      aux = PVector.sub(perceived.body.physics2D.position.location, owner.body.physics2D.position.location);
+      float d = aux.mag();
+      if (d < desiredseparation) {
+        aux.normalize();
+        aux.div(-d);        // Weight by distance
+        force.add(aux);
+        count++;            // Keep track of how many
+      }
+    }
+    if (count > 0) {
+      force.div((float)count);
+      force.normalize();
+      force.mult(owner.body.physics2D.maxSpeed());
+      force.sub(owner.body.physics2D.movement.velocity);
+    }
+
+    return force;
+  }
+
+  private PVector cohesion() {
+    PVector force = new PVector();
+
+    PVector aux;
+    int count = 0;
+    for (Specimen perceived : owner.sensors.specimen.visible) {
+      float desiredseparation = max(owner.body.shape.size, perceived.body.shape.size)*Configs.Component.Sensor.SizeToRangeRatio;
+      aux = PVector.sub(perceived.body.physics2D.position.location, owner.body.physics2D.position.location);
+      float d = aux.mag();
+      if (d < desiredseparation) {
+        aux.normalize();
+        aux.div(d);        // Weight by distance
+        force.add(aux);
+        count++;            // Keep track of how many
+      }
+    }
+    if (count > 0) {
+      force.div((float)count);
+      force.normalize();
+      force.mult(owner.body.physics2D.maxSpeed());
+      force.sub(owner.body.physics2D.movement.velocity);
+    }
+
+    return force;
+  }
+
+  private boolean willFlock() {
+    return (owner.sensors.specimen != null && owner.sensors.specimen.enabled && !owner.sensors.specimen.visible.isEmpty());
+  }
+
+  PVector steeringForce() {
+    if (!enabled || !willFlock()) 
+      return new PVector();
+
+    PVector force = velocityMatching();
+    force.mult(Configs.Behavior.Steering.Weight.FlockAlignment);
+    PVector aux = separation();
+    aux.mult(Configs.Behavior.Steering.Weight.FlockSeparation);
+    force.add(aux);
+    aux = cohesion();
+    aux.mult(Configs.Behavior.Steering.Weight.FlockCohesion);
+    force.add(aux);
+    
+    return force;
+  }
+}
+
 class SeekBehavior extends SteeringBehavior {
   PVector target;
 

@@ -51,7 +51,7 @@ void setupGlobalVariables() {
   mouse = new PVector();
 
   unnamedList = new ArrayList<Specimen>();
-  for (int i = 0; i <5; i++)
+  for (int i = 0; i <15; i++)
     unnamedList.add(randomSpecimen());
 }
 

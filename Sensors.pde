@@ -54,11 +54,16 @@ class WallSensor extends ProximitySensor {
 }
 
 class SpecimenSensor extends ProximitySensor {
+  Specimen owner;
   ArrayList<Specimen> visible;
   
-  SpecimenSensor(PositionComponent position, float range) {
+  SpecimenSensor(Specimen owner, PositionComponent position, float range) {
     super(position, range);
-
+    
+assert owner != null: 
+    "Specimen do SpecimenSensor não pode ser nulo.";
+    
+    this.owner = owner;
     visible = new ArrayList<Specimen>();
   }
 
@@ -71,9 +76,9 @@ class SpecimenSensor extends ProximitySensor {
     visible.clear();
     if (!enabled) return;
 
-    for (Specimen unnamed : unnamedList)
-      if (isVisible(unnamed))
-        visible.add(unnamed);
+    for (Specimen specimen : unnamedList)
+      if (owner != specimen && isVisible(specimen))
+        visible.add(specimen);
   }
 }
 

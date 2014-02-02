@@ -26,7 +26,7 @@ class Specimen {
     this.steering = steering;
 
     sensors = new Sensors();
-    sensors.specimen = new SpecimenSensor(this.body.physics2D.position, Configs.Component.Sensor.SizeToRangeRatio*this.body.shape.size);
+    sensors.specimen = new SpecimenSensor(this, this.body.physics2D.position, Configs.Component.Sensor.SizeToRangeRatio*this.body.shape.size);
   }
 
   void steer() {
