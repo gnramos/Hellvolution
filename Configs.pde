@@ -12,10 +12,10 @@ static class Configs {
       }
       
       static class Weight {
-        static final float Flee = 2;
+        static final float Flee = 0.2;
         static final float Seek = 2;
         static final float WallAvoidance = 10;
-        static final float Wandering = 1;
+        static final float Wandering = 5;
       }
     }
   }
@@ -42,6 +42,10 @@ static class Configs {
       }
     }
 
+    static class Sensor {
+      static final float SizeToRangeRatio = 4;
+    }
+    
     static class Style {
       static class Max {
         static final float StrokeWeight = 5;

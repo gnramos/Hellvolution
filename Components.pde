@@ -160,10 +160,14 @@ assert physics2D != null :
 class Unnamed {
   BodyComponent body;
   Steering steering;
+  
+  UnnamedSensor sensor;
 
   Unnamed(BodyComponent body, Steering steering) {
     this.body = body;
     this.steering = steering;
+    
+    sensor = new UnnamedSensor(this.body.physics2D.position, Configs.Component.Sensor.SizeToRangeRatio*this.body.shape.size);
   }
 
   void steer() {
@@ -173,6 +177,8 @@ class Unnamed {
   }
 
   void update() {
+    sensor.read();
+    
     steer();
   }
 
@@ -189,7 +195,18 @@ class Unnamed {
     stroke(#FF0000);
     WallSensor sensor = (WallSensor)((WallAvoidanceBehavior)steering.behaviors.get(0)).sensor;
     line(0, 0, -sensor.obstacleLocation.x, -sensor.obstacleLocation.y);
+    
+    strokeWeight(1);
+    stroke(body.style.strokeColor);
+    noFill();
+    ellipse(0,0,this.sensor.range,this.sensor.range);
+    for (Unnamed unnamed : this.sensor.visible) {
+        PVector d = unnamed.sensor.position.location.get();
+        d.sub(this.body.physics2D.position.location);
+        line(0, 0, d.x, d.y);
+    }
     popMatrix();
+      
   }
 
   void display() {

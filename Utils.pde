@@ -19,6 +19,11 @@ void rotate(Physics2DComponent physics2D) {
   rotate(physics2D.position.headingAngle);
 }
 
+/** Overload da função original com argumento PositionComponent. */
+float dist(PositionComponent a, PositionComponent b) {
+  return PVector.dist(a.location, b.location);
+}
+
 
 float randomShapeSize() {
   return random(Configs.Component.Shape.Min.Size, Configs.Component.Shape.Max.Size);
@@ -82,8 +87,8 @@ Unnamed randomUnnamed() {
   
   WallSensor wallSensor = new WallSensor(body.physics2D.position, 2*body.shape.size);
   behaviors.add(new WallAvoidanceBehavior(unnamed, wallSensor));
-//  behaviors.add(new FleeBehavior(unnamed, mouse));
-//  behaviors.add(new WanderingBehavior(unnamed));
+  behaviors.add(new WanderingBehavior(unnamed));
+  behaviors.add(new FleeBehavior(unnamed, mouse));
   
   return unnamed; 
 }
