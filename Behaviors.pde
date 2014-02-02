@@ -65,14 +65,19 @@ class FlockBehavior extends SteeringBehavior {
   FlockBehavior(Specimen owner) {
     super(owner, Configs.Behavior.Steering.Weight.Flock);
   }
+  
+  private boolean flockWith(Specimen specimen) {
+    return true;
+  }
 
-  /** Alignment (also known as “copy”): Steer in the same direction as your neighbors. */
   private PVector velocityMatching() {
     PVector force = new PVector();
 
     PVector aux;
     int count = 0;
     for (Specimen perceived : owner.sensors.specimen.visible) {
+      if(!flockWith(specimen)) continue;
+      
       float desiredseparation = min(owner.body.shape.size, perceived.body.shape.size)*Configs.Component.Sensor.SizeToRangeRatio;
       float d = dist(owner.body.physics2D.position, perceived.body.physics2D.position);
       if (d < desiredseparation) {
@@ -89,13 +94,14 @@ class FlockBehavior extends SteeringBehavior {
     return force;
   }
 
-  /** Separation (also known as “avoidance”): Steer to avoid colliding with your neighbors. */
   private PVector separation() {
     PVector force = new PVector();
 
     PVector aux;
     int count = 0;
     for (Specimen perceived : owner.sensors.specimen.visible) {
+      if(!flockWith(specimen)) continue;
+      
       float desiredseparation = min(owner.body.shape.size, perceived.body.shape.size)*Configs.Component.Sensor.SizeToRangeRatio;
       aux = PVector.sub(perceived.body.physics2D.position.location, owner.body.physics2D.position.location);
       float d = aux.mag();
@@ -122,6 +128,8 @@ class FlockBehavior extends SteeringBehavior {
     PVector aux;
     int count = 0;
     for (Specimen perceived : owner.sensors.specimen.visible) {
+      if(!flockWith(specimen)) continue;
+      
       float desiredseparation = max(owner.body.shape.size, perceived.body.shape.size)*Configs.Component.Sensor.SizeToRangeRatio;
       aux = PVector.sub(perceived.body.physics2D.position.location, owner.body.physics2D.position.location);
       float d = aux.mag();
