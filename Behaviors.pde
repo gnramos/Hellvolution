@@ -76,7 +76,7 @@ class FlockBehavior extends SteeringBehavior {
     PVector aux;
     int count = 0;
     for (Specimen perceived : owner.sensors.specimen.visible) {
-      if(!flockWith(specimen)) continue;
+      if(!flockWith(perceived)) continue;
       
       float desiredseparation = min(owner.body.shape.size, perceived.body.shape.size)*Configs.Component.Sensor.SizeToRangeRatio;
       float d = dist(owner.body.physics2D.position, perceived.body.physics2D.position);
@@ -100,7 +100,7 @@ class FlockBehavior extends SteeringBehavior {
     PVector aux;
     int count = 0;
     for (Specimen perceived : owner.sensors.specimen.visible) {
-      if(!flockWith(specimen)) continue;
+      if(!flockWith(perceived)) continue;
       
       float desiredseparation = min(owner.body.shape.size, perceived.body.shape.size)*Configs.Component.Sensor.SizeToRangeRatio;
       aux = PVector.sub(perceived.body.physics2D.position.location, owner.body.physics2D.position.location);
@@ -128,7 +128,7 @@ class FlockBehavior extends SteeringBehavior {
     PVector aux;
     int count = 0;
     for (Specimen perceived : owner.sensors.specimen.visible) {
-      if(!flockWith(specimen)) continue;
+      if(!flockWith(perceived)) continue;
       
       float desiredseparation = max(owner.body.shape.size, perceived.body.shape.size)*Configs.Component.Sensor.SizeToRangeRatio;
       aux = PVector.sub(perceived.body.physics2D.position.location, owner.body.physics2D.position.location);
